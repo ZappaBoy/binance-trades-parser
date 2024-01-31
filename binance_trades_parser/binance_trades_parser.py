@@ -2,15 +2,19 @@ import argparse
 import importlib.metadata as metadata
 import os
 from argparse import Namespace
+from statistics import mean
 from typing import List
 
 import pandas as pd
 
 from models.log_level import LogLevel
 from models.trade import Trade
+from models.trade_status import TradeStatus
 from shared.utils.logger import Logger
 
 __version__ = metadata.version(__package__ or __name__)
+
+DECIMAL_PLACES = 2
 
 
 class BinanceTradesParser:
@@ -83,6 +87,34 @@ class BinanceTradesParser:
             })
             df = df.sort_values(by=index_column_name)
 
-            for index, row in df.iterrows():
-                trade = Trade.parse_row_object(row.to_dict())
-                print(trade)
+            trades: List[Trade] = [Trade.parse_row_object(row.to_dict()) for _, row in df.iterrows()]
+
+            initial_balance = 100
+            capital_per_trade = 5
+            balance = initial_balance
+            portfolio = {}
+            profits = []
+            for trade in trades:
+                if trade.status == TradeStatus.Filled:
+                    if trade.pair in portfolio:
+                        trade_in_portfolio = portfolio[trade.pair]
+                        total_in_portfolio = trade_in_portfolio['total']
+                        trade_net_profit = trade.total - total_in_portfolio
+                        percentage_profit = trade_net_profit / total_in_portfolio
+                        balance += trade_in_portfolio['amount'] * percentage_profit
+                        profits.append(percentage_profit)
+                        self.logger.info(f'{trade.date} | {trade.pair} {round(percentage_profit * 100, 2)}%')
+                        del portfolio[trade.pair]
+                    else:
+                        if trade.type.is_buy():
+                            portfolio[trade.pair] = {
+                                'total': trade.total,
+                                'amount': balance * capital_per_trade / 100
+                            }
+
+            self.logger.info(f'Balance: {round(balance, DECIMAL_PLACES)}')
+            self.logger.info(f'Profit: {round((balance - initial_balance) / initial_balance * 100, DECIMAL_PLACES)}%')
+            self.logger.info(f'Closed Trades: {len(profits)}')
+            self.logger.info(f'Average Profit per Trades: {round(mean(profits) * 100, DECIMAL_PLACES)}%')
+            self.logger.info(f'Max profit: {round(max(profits) * 100, DECIMAL_PLACES)}%')
+            self.logger.info(f'Max loss: {round(min(profits) * 100, DECIMAL_PLACES)}%')

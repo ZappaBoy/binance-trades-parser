@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 from typing import Optional
 
 from pydantic.v1 import validator
@@ -7,9 +7,10 @@ from binance_trades_parser.models.custom_base_model import CustomBaseModel
 from models.side import Side
 from models.trade_status import TradeStatus
 
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class Trade(CustomBaseModel):
-    date: date
+    date: datetime
     order_number: int
     pair: str
     type: Side
@@ -23,15 +24,12 @@ class Trade(CustomBaseModel):
 
     @validator("date", pre=True)
     def parse_birthdate(cls, value):
-        return datetime.strptime(
-            value,
-            "%Y-%m-%d %H:%M:%S"
-        ).date()
+        return datetime.strptime(value, DATETIME_FORMAT)
 
     @staticmethod
     def parse_row_object(row: dict):
         return Trade.parse_obj({
-            'date': datetime.strptime(row['Date(UTC)'], "%Y-%m-%d %H:%M:%S").date(),
+            'date': datetime.strptime(row['Date(UTC)'], DATETIME_FORMAT),
             'order_number': row['OrderNo'],
             'pair': row['Pair'],
             'type': row['Type'],
