@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "binance_trades_parser"
+version = "0.1.0"
+description = "binance_trades_parser is a simple tool to parse and simply show the portfolio profitability from Binance XLSX trade files."
+authors = ["ZappaBoy <federico.zappone@justanother.cloud>"]
+maintainers = ["ZappaBoy <federico.zappone@justanother.cloud>"]
+readme = "README.md"
+packages = [{ include = "binance_trades_parser" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+pydantic = "^2.4.2"
+pandas = "^2.1.1"
+openpyxl = "^3.1.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+python-dotenv = "^1.0.0"
+poetry2setup = "^1.1.0"
+pytest-env = "^0.8.1"
+
+[tool.pytest.ini_options]
+addopts = "-s -v"
+pythonpath = [
+    "binance_trades_parser"
+]
+env = [
+    "ENVIRONMENT=testing",
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+test = "pytest:main"
+binance_trades_parser = "binance_trades_parser:main"
