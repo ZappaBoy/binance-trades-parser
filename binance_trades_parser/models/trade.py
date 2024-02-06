@@ -4,8 +4,8 @@ from typing import Optional
 from pydantic.v1 import validator
 
 from binance_trades_parser.models.custom_base_model import CustomBaseModel
-from models.side import Side
-from models.trade_status import TradeStatus
+from binance_trades_parser.models.side import Side
+from binance_trades_parser.models.trade_status import TradeStatus
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 

@@ -7,10 +7,10 @@ from typing import List
 
 import pandas as pd
 
-from models.log_level import LogLevel
-from models.trade import Trade
-from models.trade_status import TradeStatus
-from shared.utils.logger import Logger
+from binance_trades_parser.models.log_level import LogLevel
+from binance_trades_parser.models.trade import Trade
+from binance_trades_parser.models.trade_status import TradeStatus
+from binance_trades_parser.shared.utils.logger import Logger
 
 __version__ = metadata.version(__package__ or __name__)
 

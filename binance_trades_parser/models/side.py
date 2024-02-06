@@ -1,4 +1,4 @@
-from models.case_insensitive_enum import CaseInsensitiveEnum
+from binance_trades_parser.models.case_insensitive_enum import CaseInsensitiveEnum
 
 
 class Side(CaseInsensitiveEnum):
