@@ -118,3 +118,7 @@ class BinanceTradesParser:
             self.logger.info(f'Average Profit per Trades: {round(mean(profits) * 100, DECIMAL_PLACES)}%')
             self.logger.info(f'Max profit: {round(max(profits) * 100, DECIMAL_PLACES)}%')
             self.logger.info(f'Max loss: {round(min(profits) * 100, DECIMAL_PLACES)}%')
+            self.logger.info(
+                f'Accuracy: {round(len([p for p in profits if p > 0]) / len(profits) * 100, DECIMAL_PLACES)}%')
+            self.logger.info(
+                f'Profit Factor: {round(sum([p for p in profits if p > 0]) / abs(sum([p for p in profits if p < 0])), DECIMAL_PLACES)}')
